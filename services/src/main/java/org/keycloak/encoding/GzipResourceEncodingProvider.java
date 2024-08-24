@@ -11,6 +11,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.nio.file.Path;
 import java.util.zip.GZIPOutputStream;
 
 public class GzipResourceEncodingProvider implements ResourceEncodingProvider {
@@ -38,7 +39,8 @@ public class GzipResourceEncodingProvider implements ResourceEncodingProvider {
 
         try {
             File encodedFile = new File(filePath);
-            if (!encodedFile.getCanonicalPath().startsWith(cacheDir.getCanonicalPath())) {
+            Path encodedFilePath = encodedFile.toPath().normalize();
+            if (!encodedFilePath.startsWith(cacheDir.toPath().normalize())) {
                 return null;
             }
 
