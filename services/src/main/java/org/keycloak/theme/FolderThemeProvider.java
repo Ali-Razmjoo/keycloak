@@ -46,8 +46,12 @@ public class FolderThemeProvider implements ThemeProvider {
             return null;
         }
 
+        if (!isValidThemeName(name)) {
+            return null;
+        }
+
         File themeDir = getThemeDir(name, type);
-        return themeDir.isDirectory() ? new FolderTheme(themeDir, name, type) : null;
+        return themeDir != null && themeDir.isDirectory() ? new FolderTheme(themeDir, name, type) : null;
     }
 
     @Override
@@ -76,7 +80,7 @@ public class FolderThemeProvider implements ThemeProvider {
 
     @Override
     public boolean hasTheme(String name, Theme.Type type) {
-        return themesDir != null ? getThemeDir(name, type).isDirectory() : false;
+        return themesDir != null && isValidThemeName(name) ? getThemeDir(name, type).isDirectory() : false;
     }
 
     @Override
@@ -84,6 +88,10 @@ public class FolderThemeProvider implements ThemeProvider {
     }
 
     private File getThemeDir(String name, Theme.Type type) {
+        if (!isValidThemeName(name)) {
+            return null;
+        }
+
         File f = new File(themesDir, name + File.separator + type.name().toLowerCase());
         try {
             if (!f.getCanonicalPath().startsWith(themesDir.getCanonicalPath() + File.separator)) {
@@ -95,4 +103,7 @@ public class FolderThemeProvider implements ThemeProvider {
         return f;
     }
 
+    private boolean isValidThemeName(String themeName) {
+        return themeName != null && themeName.matches("^[a-zA-Z0-9_-]+$");
+    }
 }

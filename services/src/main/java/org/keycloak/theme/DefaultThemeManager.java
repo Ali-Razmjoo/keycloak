@@ -68,6 +68,11 @@ public class DefaultThemeManager implements ThemeManager {
 
     @Override
     public Theme getTheme(String name, Theme.Type type) {
+        if (!isValidThemeName(name)) {
+            log.warnf("Invalid theme name: %s", name);
+            return null;
+        }
+
         Theme theme = factory.getCachedTheme(name, type);
         if (theme == null) {
             theme = loadTheme(name, type);
@@ -131,6 +136,11 @@ public class DefaultThemeManager implements ThemeManager {
     }
 
     private Theme findTheme(String name, Theme.Type type) {
+        if (!isValidThemeName(name)) {
+            log.warnf("Invalid theme name: %s", name);
+            return null;
+        }
+
         for (ThemeProvider p : getProviders()) {
             if (p.hasTheme(name, type)) {
                 try {
@@ -370,4 +380,7 @@ public class DefaultThemeManager implements ThemeManager {
         return providers;
     }
 
+    private boolean isValidThemeName(String themeName) {
+        return themeName != null && themeName.matches("^[a-zA-Z0-9_-]+$");
+    }
 }

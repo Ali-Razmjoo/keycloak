@@ -79,6 +79,10 @@ public class ThemeResource {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
 
+        if (!isValidThemeName(themeName)) {
+            return Response.status(Response.Status.BAD_REQUEST).entity("Invalid theme name").build();
+        }
+
         try {
             String contentType = MimeTypeUtil.getContentType(path);
             Theme theme = session.theme().getTheme(themeName, Theme.Type.valueOf(themType.toUpperCase()));
@@ -130,6 +134,9 @@ public class ThemeResource {
         if (theme == null) {
             theTheme = session.theme().getTheme(type);
         } else {
+            if (!isValidThemeName(theme)) {
+                return Response.status(Response.Status.BAD_REQUEST).entity("Invalid theme name").build();
+            }
             theTheme = session.theme().getTheme(theme, type);
         }
 
@@ -152,6 +159,10 @@ public class ThemeResource {
         }
 
         return Cors.builder().allowedOrigins("*").auth().add(Response.ok(result));
+    }
+
+    private boolean isValidThemeName(String themeName) {
+        return themeName != null && themeName.matches("^[a-zA-Z0-9_-]+$");
     }
 }
 
